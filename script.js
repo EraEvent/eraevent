@@ -153,7 +153,7 @@ function renderGallery(){
 
 async function loadGallery(){
   try{
-    const response=await fetch("./gallery-settings.json");
+    const response=await fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"});
     if(!response.ok)throw new Error("Gallery settings unavailable");
     gallery=await response.json();
   }catch{

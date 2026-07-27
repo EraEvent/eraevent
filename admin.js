@@ -102,7 +102,7 @@ document.getElementById("importFile").addEventListener("change",async event=>{
   }
 });
 
-fetch("./gallery-settings.json")
+fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"})
   .then(response=>response.ok?response.json():Promise.reject())
   .then(data=>{settings=validSettings(data)?data:defaultSettings();render()})
   .catch(()=>{settings=defaultSettings();render()});
