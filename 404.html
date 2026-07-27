@@ -112,10 +112,62 @@
       </div>
     </section>
 
+    <dialog class="admin-login" id="adminLogin">
+      <form method="dialog" id="adminLoginForm">
+        <button class="admin-login-close" id="closeLogin" type="button" aria-label="Закрити">×</button>
+        <p class="eyebrow">ALEX GERA</p>
+        <h2>Адмінпанель</h2>
+        <p>Введіть пароль, щоб відкрити редактор медіатеки.</p>
+        <label for="adminPassword">Пароль</label>
+        <input id="adminPassword" type="password" autocomplete="current-password" required>
+        <p class="admin-login-error" id="adminLoginError" role="alert" hidden>Неправильний пароль</p>
+        <button class="admin-login-submit" type="submit">Відкрити редактор</button>
+      </form>
+    </dialog>
+
+    <section class="media-editor shell" id="mediaEditor" hidden>
+      <div class="editor-heading">
+        <div><p class="eyebrow">Панель редагування</p><h2>Редактор медіатеки</h2></div>
+        <button id="closeEditor" type="button" aria-label="Закрити редактор">×</button>
+      </div>
+      <div class="editor-help">
+        Перетягуй фотографії, щоб змінити порядок. Обери фотографію та відрегулюй її положення і масштаб.
+      </div>
+      <div class="editor-workspace">
+        <div>
+          <h3>Фотографії</h3>
+          <div class="editor-gallery" id="editorGallery"></div>
+        </div>
+        <aside>
+          <h3>Кадрування</h3>
+          <div class="editor-preview"><img id="preview" alt="Попередній перегляд"></div>
+          <p id="selectedName">Оберіть фотографію</p>
+          <label>Вліво / вправо <output id="xValue">50%</output><input id="xRange" type="range" min="0" max="100" value="50"></label>
+          <label>Вгору / вниз <output id="yValue">50%</output><input id="yRange" type="range" min="0" max="100" value="50"></label>
+          <label>Масштаб <output id="zoomValue">115%</output><input id="zoomRange" type="range" min="100" max="180" value="115"></label>
+          <div class="editor-nudges">
+            <button type="button" data-nudge="y:-2">↑</button>
+            <button type="button" data-nudge="x:-2">←</button>
+            <button type="button" data-nudge="reset">Скинути</button>
+            <button type="button" data-nudge="x:2">→</button>
+            <button type="button" data-nudge="y:2">↓</button>
+          </div>
+        </aside>
+      </div>
+      <div class="editor-actions">
+        <button type="button" id="resetAll">Скинути все</button>
+        <button type="button" id="importButton">Відкрити налаштування</button>
+        <input id="importFile" type="file" accept=".json,application/json" hidden>
+        <button class="editor-save" type="button" id="downloadButton">Зберегти gallery-settings.json</button>
+      </div>
+      <p class="editor-publish">Після збереження завантаж новий <code>gallery-settings.json</code> у корінь GitHub замість старого файла.</p>
+    </section>
+
     <footer class="footer shell">
       <a class="logo" href="#top">ALEX GERA</a>
       <p data-t="footer">Ведучий у Варшаві • Польща • Європа</p>
       <a href="https://www.instagram.com/shen_gera" target="_blank" rel="noreferrer">@shen_gera</a>
+      <button class="editor-open" id="openEditor" type="button">Адмінпанель</button>
       <p>© <span id="year"></span></p>
     </footer>
   </main>
@@ -124,5 +176,6 @@
     <button aria-label="Закрити">×</button><img src="" alt="">
   </div>
   <script src="./script.js"></script>
+  <script src="./admin.js"></script>
 </body>
 </html>

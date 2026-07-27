@@ -1,7 +1,9 @@
+(function(){
 let settings=[];
 let selected=0;
 let dragged=null;
 
+const editor=document.getElementById("mediaEditor");
 const gallery=document.getElementById("editorGallery");
 const preview=document.getElementById("preview");
 const selectedName=document.getElementById("selectedName");
@@ -10,6 +12,48 @@ const controls={
   y:document.getElementById("yRange"),
   zoom:document.getElementById("zoomRange")
 };
+
+const loginDialog=document.getElementById("adminLogin");
+const loginForm=document.getElementById("adminLoginForm");
+const passwordInput=document.getElementById("adminPassword");
+const loginError=document.getElementById("adminLoginError");
+const passwordHash="a1238fe5fb3c5596a4b3d87947e498d3267245ec742bda43960a8e851afd466c";
+
+async function hashPassword(value){
+  const data=new TextEncoder().encode(value);
+  const digest=await crypto.subtle.digest("SHA-256",data);
+  return Array.from(new Uint8Array(digest)).map(byte=>byte.toString(16).padStart(2,"0")).join("");
+}
+
+function openEditor(){
+  loginDialog.close();
+  passwordInput.value="";
+  loginError.hidden=true;
+  editor.hidden=false;
+  editor.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+document.getElementById("openEditor").addEventListener("click",()=>{
+  loginError.hidden=true;
+  passwordInput.value="";
+  loginDialog.showModal();
+  setTimeout(()=>passwordInput.focus(),50);
+});
+document.getElementById("closeLogin").addEventListener("click",()=>loginDialog.close());
+loginDialog.addEventListener("click",event=>{if(event.target===loginDialog)loginDialog.close()});
+loginForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(await hashPassword(passwordInput.value)===passwordHash){
+    openEditor();
+  }else{
+    loginError.hidden=false;
+    passwordInput.select();
+  }
+});
+document.getElementById("closeEditor").addEventListener("click",()=>{
+  editor.hidden=true;
+  document.querySelector(".footer").scrollIntoView({behavior:"smooth",block:"start"});
+});
 
 function defaultSettings(){
   return Array.from({length:9},(_,i)=>({file:`gallery-${String(i+1).padStart(2,"0")}.webp`,x:50,y:50,zoom:115}));
@@ -106,3 +150,4 @@ fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"})
   .then(response=>response.ok?response.json():Promise.reject())
   .then(data=>{settings=validSettings(data)?data:defaultSettings();render()})
   .catch(()=>{settings=defaultSettings();render()});
+})();
