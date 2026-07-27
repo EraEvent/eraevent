@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Редактор медіатеки — Alex Gera</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./admin.css">
+</head>
+<body>
+  <header>
+    <div><p>ALEX GERA</p><h1>Редактор медіатеки</h1></div>
+    <a href="./index.html">Переглянути сайт ↗</a>
+  </header>
+  <main>
+    <section class="help">
+      <strong>Як редагувати</strong>
+      <span>Перетягніть картки, щоб змінити порядок. Натисніть фотографію та відрегулюйте її положення й масштаб. Наприкінці завантажте файл налаштувань.</span>
+    </section>
+    <section class="workspace">
+      <div>
+        <h2>Фотографії</h2>
+        <div class="gallery" id="editorGallery"></div>
+      </div>
+      <aside>
+        <h2>Кадрування</h2>
+        <div class="preview"><img id="preview" alt="Попередній перегляд"></div>
+        <p id="selectedName">Оберіть фотографію</p>
+        <label>Вліво / вправо <output id="xValue">50%</output><input id="xRange" type="range" min="0" max="100" value="50"></label>
+        <label>Вгору / вниз <output id="yValue">50%</output><input id="yRange" type="range" min="0" max="100" value="50"></label>
+        <label>Масштаб <output id="zoomValue">115%</output><input id="zoomRange" type="range" min="100" max="180" value="115"></label>
+        <div class="nudges" aria-label="Точне переміщення">
+          <button data-nudge="y:-2">↑</button>
+          <button data-nudge="x:-2">←</button>
+          <button data-nudge="reset">Скинути</button>
+          <button data-nudge="x:2">→</button>
+          <button data-nudge="y:2">↓</button>
+        </div>
+      </aside>
+    </section>
+    <section class="actions">
+      <button class="secondary" id="resetAll">Скинути все</button>
+      <button class="secondary" id="importButton">Завантажити готові налаштування</button>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+      <button class="primary" id="downloadButton">Зберегти — завантажити gallery-settings.json</button>
+    </section>
+    <section class="publish">
+      <strong>Щоб зміни побачили всі:</strong>
+      <span>завантажте новий файл <code>gallery-settings.json</code> у корінь репозиторію GitHub із заміною старого файла. Самі фотографії залишаться без змін.</span>
+    </section>
+  </main>
+  <script src="./admin.js"></script>
+</body>
+</html>
