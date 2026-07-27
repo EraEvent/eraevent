@@ -1,11 +1,56 @@
 [
-  {"file":"gallery-01.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-02.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-03.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-04.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-05.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-06.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-07.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-08.webp","x":50,"y":50,"zoom":115},
-  {"file":"gallery-09.webp","x":50,"y":50,"zoom":115}
+  {
+    "file": "gallery-01.webp",
+    "x": 50,
+    "y": 42,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-02.webp",
+    "x": 50,
+    "y": 29,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-03.webp",
+    "x": 50,
+    "y": 50,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-04.webp",
+    "x": 50,
+    "y": 50,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-05.webp",
+    "x": 50,
+    "y": 50,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-06.webp",
+    "x": 50,
+    "y": 19,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-07.webp",
+    "x": 50,
+    "y": 50,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-08.webp",
+    "x": 50,
+    "y": 50,
+    "zoom": 100
+  },
+  {
+    "file": "gallery-09.webp",
+    "x": 50,
+    "y": 50,
+    "zoom": 100
+  }
 ]
