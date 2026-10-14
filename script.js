@@ -155,7 +155,21 @@ async function loadGallery(){
   try{
     const response=await fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"});
     if(!response.ok)throw new Error("Gallery settings unavailable");
-    gallery=await response.json();
+    const data=await response.json();
+    gallery=Array.isArray(data)?data:data.gallery;
+    if(!Array.isArray(gallery))throw new Error("Gallery settings unavailable");
+    if(!Array.isArray(data)&&data.hero){
+      const desktop=data.hero.desktop||{};
+      const mobile=data.hero.mobile||{};
+      const root=document.documentElement;
+      root.style.setProperty("--hero-desktop-x",`${desktop.x??56}%`);
+      root.style.setProperty("--hero-desktop-y",`${desktop.y??50}%`);
+      root.style.setProperty("--hero-desktop-zoom",Number(desktop.zoom??104)/100);
+      root.style.setProperty("--hero-mobile-x",`${mobile.x??34}%`);
+      root.style.setProperty("--hero-mobile-y",`${mobile.y??50}%`);
+      root.style.setProperty("--hero-mobile-zoom",Number(mobile.zoom??100)/100);
+      if(/^#[0-9a-f]{6}$/i.test(data.hero.accentColor||""))root.style.setProperty("--gold",data.hero.accentColor);
+    }
   }catch{
     gallery=Array.from({length:9},(_,i)=>({file:`gallery-${String(i+1).padStart(2,"0")}.webp`,x:50,y:50,zoom:115}));
   }

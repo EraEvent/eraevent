@@ -131,8 +131,35 @@
         <button id="closeEditor" type="button" aria-label="Закрити редактор">×</button>
       </div>
       <div class="editor-help">
-        Перетягуй фотографії, щоб змінити порядок. Обери фотографію та відрегулюй її положення і масштаб.
+        Налаштуй головний екран окремо для комп’ютера й телефона, а нижче — порядок та кадрування галереї.
       </div>
+      <section class="hero-editor">
+        <div class="hero-editor-top">
+          <div><h3>Головна фотографія</h3><p>Завантаж фото, обери вигляд «Комп’ютер» або «Телефон» і відрегулюй кадр.</p></div>
+          <div class="hero-device-switch" role="group" aria-label="Попередній перегляд пристрою">
+            <button class="active" type="button" data-hero-device="desktop">Комп’ютер</button>
+            <button type="button" data-hero-device="mobile">Телефон</button>
+          </div>
+        </div>
+        <div class="hero-editor-grid">
+          <div class="hero-editor-preview" id="heroEditorPreview" aria-label="Попередній перегляд головної фотографії"></div>
+          <div class="hero-editor-controls">
+            <label class="hero-file-button">Обрати нову фотографію<input id="heroFile" type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
+            <button id="downloadHero" type="button" disabled>Завантажити hero.webp</button>
+            <label>Вліво / вправо <output id="heroXValue">56%</output><input id="heroXRange" type="range" min="0" max="100" value="56"></label>
+            <label>Вгору / вниз <output id="heroYValue">50%</output><input id="heroYRange" type="range" min="0" max="100" value="50"></label>
+            <label>Масштаб <output id="heroZoomValue">104%</output><input id="heroZoomRange" type="range" min="100" max="180" value="104"></label>
+            <button id="resetHeroCrop" type="button">Скинути кадрування</button>
+          </div>
+        </div>
+        <div class="accent-editor">
+          <div><h3>Золотий колір сайту</h3><p>Змінює жовті заголовки, кнопки, лінії та акценти.</p></div>
+          <label class="color-picker-label">Колір<input id="accentColor" type="color" value="#c9a96a"></label>
+          <label>HEX<input id="accentHex" type="text" value="#c9a96a" maxlength="7" spellcheck="false"></label>
+          <button id="pickAccent" type="button">Піпетка</button>
+          <button id="resetAccent" type="button">Початковий колір</button>
+        </div>
+      </section>
       <div class="editor-workspace">
         <div>
           <h3>Фотографії</h3>
@@ -160,7 +187,7 @@
         <input id="importFile" type="file" accept=".json,application/json" hidden>
         <button class="editor-save" type="button" id="downloadButton">Зберегти gallery-settings.json</button>
       </div>
-      <p class="editor-publish">Після збереження завантаж новий <code>gallery-settings.json</code> у корінь GitHub замість старого файла.</p>
+      <p class="editor-publish">Завантаж <code>gallery-settings.json</code> у корінь GitHub. Якщо обрав нове головне фото — також завантаж <code>hero.webp</code> у папку <code>assets</code>.</p>
     </section>
 
     <footer class="footer shell">

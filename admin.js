@@ -1,153 +1,51 @@
 (function(){
-let settings=[];
-let selected=0;
-let dragged=null;
-
-const editor=document.getElementById("mediaEditor");
-const gallery=document.getElementById("editorGallery");
-const preview=document.getElementById("preview");
-const selectedName=document.getElementById("selectedName");
-const controls={
-  x:document.getElementById("xRange"),
-  y:document.getElementById("yRange"),
-  zoom:document.getElementById("zoomRange")
-};
-
-const loginDialog=document.getElementById("adminLogin");
-const loginForm=document.getElementById("adminLoginForm");
-const passwordInput=document.getElementById("adminPassword");
-const loginError=document.getElementById("adminLoginError");
+let settings=[],selected=0,dragged=null,heroDevice="desktop",heroBlob=null,heroObjectUrl="";
+const DEFAULT_ACCENT="#c9a96a";
+const defaultHero=()=>({desktop:{x:56,y:50,zoom:104},mobile:{x:34,y:50,zoom:100},accentColor:DEFAULT_ACCENT});
+let hero=defaultHero();
+const editor=document.getElementById("mediaEditor"),gallery=document.getElementById("editorGallery"),preview=document.getElementById("preview"),selectedName=document.getElementById("selectedName");
+const controls={x:document.getElementById("xRange"),y:document.getElementById("yRange"),zoom:document.getElementById("zoomRange")};
+const heroPreview=document.getElementById("heroEditorPreview"),heroControls={x:document.getElementById("heroXRange"),y:document.getElementById("heroYRange"),zoom:document.getElementById("heroZoomRange")};
+const accentColor=document.getElementById("accentColor"),accentHex=document.getElementById("accentHex");
+const loginDialog=document.getElementById("adminLogin"),loginForm=document.getElementById("adminLoginForm"),passwordInput=document.getElementById("adminPassword"),loginError=document.getElementById("adminLoginError");
 const passwordHash="a1238fe5fb3c5596a4b3d87947e498d3267245ec742bda43960a8e851afd466c";
 
-async function hashPassword(value){
-  const data=new TextEncoder().encode(value);
-  const digest=await crypto.subtle.digest("SHA-256",data);
-  return Array.from(new Uint8Array(digest)).map(byte=>byte.toString(16).padStart(2,"0")).join("");
-}
-
-function openEditor(){
-  loginDialog.close();
-  passwordInput.value="";
-  loginError.hidden=true;
-  editor.hidden=false;
-  editor.scrollIntoView({behavior:"smooth",block:"start"});
-}
-
-document.getElementById("openEditor").addEventListener("click",()=>{
-  loginError.hidden=true;
-  passwordInput.value="";
-  loginDialog.showModal();
-  setTimeout(()=>passwordInput.focus(),50);
-});
+async function hashPassword(value){const data=new TextEncoder().encode(value),digest=await crypto.subtle.digest("SHA-256",data);return Array.from(new Uint8Array(digest)).map(byte=>byte.toString(16).padStart(2,"0")).join("")}
+function openEditor(){loginDialog.close();passwordInput.value="";loginError.hidden=true;editor.hidden=false;editor.scrollIntoView({behavior:"smooth",block:"start"})}
+document.getElementById("openEditor").addEventListener("click",()=>{loginError.hidden=true;passwordInput.value="";loginDialog.showModal();setTimeout(()=>passwordInput.focus(),50)});
 document.getElementById("closeLogin").addEventListener("click",()=>loginDialog.close());
 loginDialog.addEventListener("click",event=>{if(event.target===loginDialog)loginDialog.close()});
-loginForm.addEventListener("submit",async event=>{
-  event.preventDefault();
-  if(await hashPassword(passwordInput.value)===passwordHash){
-    openEditor();
-  }else{
-    loginError.hidden=false;
-    passwordInput.select();
-  }
-});
-document.getElementById("closeEditor").addEventListener("click",()=>{
-  editor.hidden=true;
-  document.querySelector(".footer").scrollIntoView({behavior:"smooth",block:"start"});
-});
+loginForm.addEventListener("submit",async event=>{event.preventDefault();if(await hashPassword(passwordInput.value)===passwordHash)openEditor();else{loginError.hidden=false;passwordInput.select()}});
+document.getElementById("closeEditor").addEventListener("click",()=>{editor.hidden=true;document.querySelector(".footer").scrollIntoView({behavior:"smooth",block:"start"})});
 
-function defaultSettings(){
-  return Array.from({length:9},(_,i)=>({file:`gallery-${String(i+1).padStart(2,"0")}.webp`,x:50,y:50,zoom:115}));
-}
-
-function validSettings(value){
-  return Array.isArray(value)&&value.length>0&&value.every(item=>typeof item.file==="string"&&Number.isFinite(Number(item.x))&&Number.isFinite(Number(item.y))&&Number.isFinite(Number(item.zoom)));
-}
-
-function style(element,item){
-  element.style.setProperty("--x",`${item.x}%`);
-  element.style.setProperty("--y",`${item.y}%`);
-  element.style.setProperty("--zoom",item.zoom/100);
-}
-
-function render(){
-  gallery.innerHTML="";
-  settings.forEach((item,index)=>{
-    const card=document.createElement("button");
-    card.className=`photo-card${index===selected?" selected":""}`;
-    card.draggable=true;
-    card.innerHTML=`<img src="./assets/${item.file}" alt=""><span>${index+1}</span>`;
-    style(card,item);
-    card.addEventListener("click",()=>{selected=index;render()});
-    card.addEventListener("dragstart",()=>{dragged=index});
-    card.addEventListener("dragover",event=>event.preventDefault());
-    card.addEventListener("drop",event=>{
-      event.preventDefault();
-      if(dragged===null||dragged===index)return;
-      const [moved]=settings.splice(dragged,1);
-      settings.splice(index,0,moved);
-      selected=index;dragged=null;render();
-    });
-    gallery.append(card);
-  });
-  updateControls();
-}
-
-function updateControls(){
-  const item=settings[selected];
-  if(!item)return;
-  preview.src=`./assets/${item.file}`;
-  preview.classList.add("ready");
-  style(preview,item);
-  selectedName.textContent=item.file;
-  Object.entries(controls).forEach(([key,input])=>{
-    input.value=item[key];
-    document.getElementById(`${key}Value`).value=`${item[key]}%`;
-  });
-}
-
-function updateValue(key,value){
-  if(!settings[selected])return;
-  settings[selected][key]=Math.max(Number(controls[key].min),Math.min(Number(controls[key].max),Number(value)));
-  render();
-}
-
+function defaultSettings(){return Array.from({length:9},(_,i)=>({file:`gallery-${String(i+1).padStart(2,"0")}.webp`,x:50,y:50,zoom:115}))}
+function validSettings(value){return Array.isArray(value)&&value.length>0&&value.every(item=>typeof item.file==="string"&&Number.isFinite(Number(item.x))&&Number.isFinite(Number(item.y))&&Number.isFinite(Number(item.zoom)))}
+function clamp(value,min,max,fallback){const number=Number(value);return Number.isFinite(number)?Math.max(min,Math.min(max,number)):fallback}
+function normalizeHero(value){const defaults=defaultHero(),normalized={desktop:{},mobile:{},accentColor:DEFAULT_ACCENT};["desktop","mobile"].forEach(device=>{const source=value&&value[device]||{};normalized[device]={x:clamp(source.x,0,100,defaults[device].x),y:clamp(source.y,0,100,defaults[device].y),zoom:clamp(source.zoom,100,180,defaults[device].zoom)}});if(value&&/^#[0-9a-f]{6}$/i.test(value.accentColor||""))normalized.accentColor=value.accentColor.toLowerCase();return normalized}
+function style(element,item){element.style.setProperty("--x",`${item.x}%`);element.style.setProperty("--y",`${item.y}%`);element.style.setProperty("--zoom",item.zoom/100)}
+function render(){gallery.innerHTML="";settings.forEach((item,index)=>{const card=document.createElement("button");card.className=`photo-card${index===selected?" selected":""}`;card.draggable=true;card.innerHTML=`<img src="./assets/${item.file}" alt=""><span>${index+1}</span>`;style(card,item);card.addEventListener("click",()=>{selected=index;render()});card.addEventListener("dragstart",()=>{dragged=index});card.addEventListener("dragover",event=>event.preventDefault());card.addEventListener("drop",event=>{event.preventDefault();if(dragged===null||dragged===index)return;const [moved]=settings.splice(dragged,1);settings.splice(index,0,moved);selected=index;dragged=null;render()});gallery.append(card)});updateControls()}
+function updateControls(){const item=settings[selected];if(!item)return;preview.src=`./assets/${item.file}`;preview.classList.add("ready");style(preview,item);selectedName.textContent=item.file;Object.entries(controls).forEach(([key,input])=>{input.value=item[key];document.getElementById(`${key}Value`).value=`${item[key]}%`})}
+function updateValue(key,value){if(!settings[selected])return;settings[selected][key]=clamp(value,Number(controls[key].min),Number(controls[key].max),settings[selected][key]);render()}
 Object.entries(controls).forEach(([key,input])=>input.addEventListener("input",()=>updateValue(key,input.value)));
-document.querySelectorAll("[data-nudge]").forEach(button=>button.addEventListener("click",()=>{
-  const command=button.dataset.nudge;
-  if(command==="reset"){
-    settings[selected]={...settings[selected],x:50,y:50,zoom:115};
-  }else{
-    const [key,amount]=command.split(":");
-    settings[selected][key]=Math.max(0,Math.min(100,settings[selected][key]+Number(amount)));
-  }
-  render();
-}));
+document.querySelectorAll("[data-nudge]").forEach(button=>button.addEventListener("click",()=>{const command=button.dataset.nudge;if(command==="reset")settings[selected]={...settings[selected],x:50,y:50,zoom:115};else{const [key,amount]=command.split(":");settings[selected][key]=clamp(settings[selected][key]+Number(amount),0,100,50)}render()}));
 
-document.getElementById("resetAll").addEventListener("click",()=>{settings=defaultSettings();selected=0;render()});
-document.getElementById("downloadButton").addEventListener("click",()=>{
-  const blob=new Blob([JSON.stringify(settings,null,2)],{type:"application/json"});
-  const link=document.createElement("a");
-  link.href=URL.createObjectURL(blob);
-  link.download="gallery-settings.json";
-  link.click();
-  URL.revokeObjectURL(link.href);
-});
+function applyAccent(value){if(!/^#[0-9a-f]{6}$/i.test(value))return false;hero.accentColor=value.toLowerCase();document.documentElement.style.setProperty("--gold",hero.accentColor);accentColor.value=hero.accentColor;accentHex.value=hero.accentColor;return true}
+function updateHero(){const item=hero[heroDevice];heroPreview.classList.toggle("mobile",heroDevice==="mobile");heroPreview.style.setProperty("--preview-x",`${item.x}%`);heroPreview.style.setProperty("--preview-y",`${item.y}%`);heroPreview.style.setProperty("--preview-zoom",item.zoom/100);Object.entries(heroControls).forEach(([key,input])=>{input.value=item[key];const label=key.charAt(0).toUpperCase()+key.slice(1);document.getElementById(`hero${label}Value`).value=`${item[key]}%`});const root=document.documentElement;root.style.setProperty(`--hero-${heroDevice}-x`,`${item.x}%`);root.style.setProperty(`--hero-${heroDevice}-y`,`${item.y}%`);root.style.setProperty(`--hero-${heroDevice}-zoom`,item.zoom/100);document.querySelectorAll("[data-hero-device]").forEach(button=>button.classList.toggle("active",button.dataset.heroDevice===heroDevice));applyAccent(hero.accentColor)}
+document.querySelectorAll("[data-hero-device]").forEach(button=>button.addEventListener("click",()=>{heroDevice=button.dataset.heroDevice;updateHero()}));
+Object.entries(heroControls).forEach(([key,input])=>input.addEventListener("input",()=>{hero[heroDevice][key]=Number(input.value);updateHero()}));
+document.getElementById("resetHeroCrop").addEventListener("click",()=>{hero[heroDevice]={...defaultHero()[heroDevice]};updateHero()});
+accentColor.addEventListener("input",()=>applyAccent(accentColor.value));
+accentHex.addEventListener("change",()=>{if(!applyAccent(accentHex.value.trim())){accentHex.value=hero.accentColor;alert("Введіть колір у форматі #c9a96a")}});
+document.getElementById("resetAccent").addEventListener("click",()=>applyAccent(DEFAULT_ACCENT));
+document.getElementById("pickAccent").addEventListener("click",async()=>{if(!window.EyeDropper){alert("Піпетка доступна в Chrome або Edge на комп’ютері. На цьому пристрої скористайтеся палітрою кольору.");return}try{const result=await new EyeDropper().open();applyAccent(result.sRGBHex)}catch{}});
+
+document.getElementById("heroFile").addEventListener("change",async event=>{const file=event.target.files[0];if(!file)return;try{const image=await createImageBitmap(file),max=2400,scale=Math.min(1,max/Math.max(image.width,image.height)),canvas=document.createElement("canvas");canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);image.close();const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/webp",.84));if(!blob)throw new Error();if(heroObjectUrl)URL.revokeObjectURL(heroObjectUrl);heroBlob=blob;heroObjectUrl=URL.createObjectURL(blob);heroPreview.style.setProperty("--hero-preview-image",`url("${heroObjectUrl}")`);document.querySelector(".hero-photo").style.backgroundImage=`url("${heroObjectUrl}")`;document.getElementById("downloadHero").disabled=false;updateHero()}catch{alert("Не вдалося підготувати фотографію. Спробуйте JPG, PNG або WEBP.")}});
+document.getElementById("downloadHero").addEventListener("click",()=>{if(!heroBlob)return;const link=document.createElement("a");link.href=URL.createObjectURL(heroBlob);link.download="hero.webp";link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)});
+
+function exportPayload(){return{schemaVersion:2,hero,gallery:settings}}
+document.getElementById("resetAll").addEventListener("click",()=>{settings=defaultSettings();hero=defaultHero();selected=0;heroDevice="desktop";render();updateHero()});
+document.getElementById("downloadButton").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(exportPayload(),null,2)],{type:"application/json"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="gallery-settings.json";link.click();URL.revokeObjectURL(link.href)});
 document.getElementById("importButton").addEventListener("click",()=>document.getElementById("importFile").click());
-document.getElementById("importFile").addEventListener("change",async event=>{
-  const file=event.target.files[0];
-  if(!file)return;
-  try{
-    const imported=JSON.parse(await file.text());
-    if(!validSettings(imported))throw new Error();
-    settings=imported.map(item=>({file:item.file,x:Number(item.x),y:Number(item.y),zoom:Number(item.zoom)}));
-    selected=0;render();
-  }catch{
-    alert("Не вдалося прочитати файл налаштувань.");
-  }
-});
-
-fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"})
-  .then(response=>response.ok?response.json():Promise.reject())
-  .then(data=>{settings=validSettings(data)?data:defaultSettings();render()})
-  .catch(()=>{settings=defaultSettings();render()});
+document.getElementById("importFile").addEventListener("change",async event=>{const file=event.target.files[0];if(!file)return;try{const imported=JSON.parse(await file.text()),importedGallery=Array.isArray(imported)?imported:imported.gallery;if(!validSettings(importedGallery))throw new Error();settings=importedGallery.map(item=>({file:item.file,x:Number(item.x),y:Number(item.y),zoom:Number(item.zoom)}));hero=normalizeHero(Array.isArray(imported)?null:imported.hero);selected=0;render();updateHero()}catch{alert("Не вдалося прочитати файл налаштувань.")}});
+fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"}).then(response=>response.ok?response.json():Promise.reject()).then(data=>{const importedGallery=Array.isArray(data)?data:data.gallery;settings=validSettings(importedGallery)?importedGallery:defaultSettings();hero=normalizeHero(Array.isArray(data)?null:data.hero);render();updateHero()}).catch(()=>{settings=defaultSettings();hero=defaultHero();render();updateHero()});
 })();
