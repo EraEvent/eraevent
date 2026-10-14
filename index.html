@@ -13,7 +13,7 @@
   <meta property="og:url" content="https://eraevent.eu/">
   <meta property="og:type" content="website">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=20261015-2">
 </head>
 <body>
   <main>
@@ -145,7 +145,8 @@
           <div class="hero-editor-preview" id="heroEditorPreview" aria-label="Попередній перегляд головної фотографії"></div>
           <div class="hero-editor-controls">
             <label class="hero-file-button">Обрати нову фотографію<input id="heroFile" type="file" accept="image/jpeg,image/png,image/webp" hidden></label>
-            <button id="downloadHero" type="button" disabled>Завантажити hero.webp</button>
+            <button id="downloadHero" type="button" disabled>Спочатку оберіть фотографію</button>
+            <p class="hero-upload-status" id="heroUploadStatus">Після вибору фото кнопка завантаження стане активною.</p>
             <label>Вліво / вправо <output id="heroXValue">56%</output><input id="heroXRange" type="range" min="0" max="100" value="56"></label>
             <label>Вгору / вниз <output id="heroYValue">50%</output><input id="heroYRange" type="range" min="0" max="100" value="50"></label>
             <label>Масштаб <output id="heroZoomValue">104%</output><input id="heroZoomRange" type="range" min="100" max="180" value="104"></label>
@@ -202,7 +203,7 @@
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
     <button aria-label="Закрити">×</button><img src="" alt="">
   </div>
-  <script src="./script.js"></script>
-  <script src="./admin.js"></script>
+  <script src="./script.js?v=20261015-2"></script>
+  <script src="./admin.js?v=20261015-2"></script>
 </body>
 </html>
