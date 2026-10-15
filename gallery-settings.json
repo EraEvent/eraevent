@@ -1,8 +1,8 @@
 {
   "schemaVersion": 2,
   "hero": {
-    "desktop": { "x": 56, "y": 22, "zoom": 100, "titleScale": 74 },
-    "mobile": { "x": 17, "y": 50, "zoom": 100, "titleScale": 68 },
+    "desktop": { "x": 56, "y": 22, "zoom": 100, "titleScale": 74, "textOffset": 0 },
+    "mobile": { "x": 1, "y": 49, "zoom": 100, "titleScale": 55, "textOffset": 14 },
     "accentColor": "#ae5b6c"
   },
   "gallery": [
