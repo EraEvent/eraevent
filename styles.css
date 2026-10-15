@@ -39,3 +39,7 @@
 /* Adjustable position for the full hero text block. */
 .hero-content{transform:translateY(calc(var(--hero-desktop-text-offset,0) * 1vh))}.hero-preview-copy{transform:translateY(var(--preview-text-offset,0px))}
 @media(max-width:800px){.hero-content{transform:translateY(calc(var(--hero-mobile-text-offset,0) * 1vh))}}
+
+
+/* Keep the mobile hero image as subdued as the desktop composition. */
+@media(max-width:800px){.hero-photo{filter:brightness(.78) saturate(.82) contrast(1.05)}}
