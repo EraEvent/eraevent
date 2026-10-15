@@ -25,3 +25,8 @@
 .hero-editor-controls label:not(.hero-file-button){display:block;color:#c9c1b6}.hero-editor-controls output{float:right;color:var(--gold)}.hero-editor-controls input[type=range]{width:100%;accent-color:var(--gold)}.hero-editor-controls button,.hero-file-button,.accent-editor button{border:1px solid #4a4032;background:#16130f;color:var(--ivory);padding:11px 12px;cursor:pointer;text-align:center}.hero-file-button:hover,.hero-editor-controls button:hover,.accent-editor button:hover{border-color:var(--gold)}.hero-editor-controls button:disabled{opacity:.45;cursor:not-allowed}.accent-editor{display:grid;grid-template-columns:minmax(220px,1fr) auto 150px auto auto;gap:12px;align-items:end;margin-top:24px;padding-top:22px;border-top:1px solid #393229}.accent-editor label{display:flex;flex-direction:column;gap:7px;color:#c9c1b6;font-size:12px}.accent-editor input[type=color]{width:64px;height:42px;border:1px solid #4a4032;background:#111;padding:3px}.accent-editor input[type=text]{height:42px;border:1px solid #4a4032;background:#080808;color:#fff;padding:0 10px;font:15px monospace;text-transform:uppercase}.accent-editor button{height:42px}@media(max-width:800px){.hero-editor{padding:16px}.hero-editor-top{flex-direction:column}.hero-editor-grid{grid-template-columns:1fr}
 .hero-editor-preview{min-height:230px}
 .hero-editor-preview.mobile{min-height:560px}.accent-editor{grid-template-columns:1fr 1fr}.accent-editor>div{grid-column:1/-1}.accent-editor button{width:100%}}
+
+
+/* Adjustable headline size from the admin editor. */
+.hero h1{font-size:calc(clamp(55px,7.1vw,104px) * var(--hero-desktop-title-scale,1))}
+@media(max-width:800px){.hero h1{font-size:calc(clamp(48px,14vw,74px) * var(--hero-mobile-title-scale,1))}}

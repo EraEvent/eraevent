@@ -168,6 +168,8 @@ async function loadGallery(){
       root.style.setProperty("--hero-mobile-x",`${mobile.x??34}%`);
       root.style.setProperty("--hero-mobile-y",`${mobile.y??50}%`);
       root.style.setProperty("--hero-mobile-zoom",Number(mobile.zoom??100)/100);
+      root.style.setProperty("--hero-desktop-title-scale",Number(desktop.titleScale??100)/100);
+      root.style.setProperty("--hero-mobile-title-scale",Number(mobile.titleScale??100)/100);
       if(/^#[0-9a-f]{6}$/i.test(data.hero.accentColor||""))root.style.setProperty("--gold",data.hero.accentColor);
     }
   }catch{
