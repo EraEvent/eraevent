@@ -23,6 +23,12 @@
       <button class="primary" id="downloadPrices">Зберегти price-settings.json</button>
       <small>Поки що файл потрібно завантажити в корінь GitHub. Автоматичне оновлення підключимо після тесту.</small>
     </section>
+    <section class="github-publish">
+      <div><p>GITHUB</p><h2>Публікація цін</h2><span>Підключення потрібне лише один раз на цьому пристрої.</span></div>
+      <label>Client ID застосунку EraEvent Admin<input id="githubClientId" type="text" autocomplete="off" placeholder="Iv..." spellcheck="false"></label>
+      <div class="github-actions"><button id="connectGithub" type="button">Підключити GitHub</button><button class="primary" id="publishPrices" type="button" disabled>Опублікувати ціни</button></div>
+      <p id="githubStatus" role="status">Встав Client ID із налаштувань GitHub App.</p>
+    </section>
     <section class="workspace">
       <div>
         <h2>Фотографії</h2>
