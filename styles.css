@@ -43,3 +43,7 @@
 
 /* Keep the mobile hero image as subdued as the desktop composition. */
 @media(max-width:800px){.hero-photo{filter:brightness(.78) saturate(.82) contrast(1.05)}}
+
+/* Price editor in the site admin panel. */
+.price-editor{margin:26px 0;padding:clamp(20px,3vw,38px);border:1px solid #4a4032;background:#100f0c}.price-editor h3{margin:5px 0 8px;font:400 clamp(32px,4vw,54px)/1 Georgia,serif;color:var(--ivory)}.price-editor>div>p:not(.eyebrow){margin:0;color:#bdb7ad}.price-editor-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}.price-edit-card{display:grid;gap:9px;padding:16px;border:1px solid #4a4032;background:#090909}.price-edit-card span{color:var(--gold);font-size:12px;letter-spacing:.14em}.price-edit-card strong{font-size:13px;letter-spacing:.08em}.price-edit-card input{width:100%;box-sizing:border-box;border:1px solid #65563e;background:#15130f;color:var(--ivory);padding:13px 10px;font:600 19px/1.1 Arial,sans-serif}.price-edit-card input:focus{outline:2px solid var(--gold);outline-offset:2px}.price-editor-actions{display:flex;justify-content:flex-end;margin-top:18px}.price-editor-actions .editor-save{margin:0}.price-editor .editor-publish{margin:16px 0 0}
+@media(max-width:800px){.price-editor{padding:18px 16px}.price-editor-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.price-edit-card{padding:13px}.price-edit-card input{font-size:18px}.price-editor-actions{display:block}.price-editor-actions .editor-save{width:100%}}

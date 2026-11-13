@@ -13,7 +13,7 @@
   <meta property="og:url" content="https://eraevent.eu/">
   <meta property="og:type" content="website">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css?v=20261015-6">
+  <link rel="stylesheet" href="./styles.css?v=20261114-1">
 </head>
 <body>
   <main>
@@ -117,7 +117,7 @@
         <button class="admin-login-close" id="closeLogin" type="button" aria-label="Закрити">×</button>
         <p class="eyebrow">ALEX GERA</p>
         <h2>Адмінпанель</h2>
-        <p>Введіть пароль, щоб відкрити редактор медіатеки.</p>
+        <p>Введіть пароль, щоб відкрити редактор сайту.</p>
         <label for="adminPassword">Пароль</label>
         <input id="adminPassword" type="password" autocomplete="current-password" required>
         <p class="admin-login-error" id="adminLoginError" role="alert" hidden>Неправильний пароль</p>
@@ -127,11 +127,11 @@
 
     <section class="media-editor shell" id="mediaEditor" hidden>
       <div class="editor-heading">
-        <div><p class="eyebrow">Панель редагування</p><h2>Редактор медіатеки</h2></div>
+        <div><p class="eyebrow">Панель редагування</p><h2>Адмінпанель сайту</h2></div>
         <button id="closeEditor" type="button" aria-label="Закрити редактор">×</button>
       </div>
       <div class="editor-help">
-        Налаштуй головний екран окремо для комп’ютера й телефона, а нижче — порядок та кадрування галереї.
+        Змінюй ціни, головний екран окремо для комп’ютера й телефона, а нижче — порядок та кадрування галереї.
       </div>
       <section class="hero-editor">
         <div class="hero-editor-top">
@@ -165,6 +165,12 @@
           <button id="pickAccent" type="button">Піпетка</button>
           <button id="resetAccent" type="button">Початковий колір</button>
         </div>
+      </section>
+      <section class="price-editor" id="priceEditor" aria-labelledby="priceEditorTitle">
+        <div><p class="eyebrow">Прайс</p><h3 id="priceEditorTitle">Ціни пакетів</h3><p>Змінюй суми з телефона або комп’ютера.</p></div>
+        <div class="price-editor-grid" id="priceEditorGrid"></div>
+        <div class="price-editor-actions"><button class="editor-save" type="button" id="downloadPrices">Зберегти price-settings.json</button></div>
+        <p class="editor-publish">Поки що для публікації завантаж <code>price-settings.json</code> у корінь GitHub. Автоматичне оновлення перевіримо наступним кроком.</p>
       </section>
       <div class="editor-workspace">
         <div>
@@ -208,7 +214,7 @@
   <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-hidden="true">
     <button aria-label="Закрити">×</button><img src="" alt="">
   </div>
-  <script src="./script.js?v=20261015-5"></script>
-  <script src="./admin.js?v=20261015-5"></script>
+  <script src="./script.js?v=20261114-1"></script>
+  <script src="./admin.js?v=20261114-1"></script>
 </body>
 </html>

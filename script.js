@@ -123,6 +123,7 @@ const packages = {
 const languageCodes={ua:"uk",pl:"pl",ru:"ru",en:"en"};
 let currentLanguage="ua";
 let gallery=[];
+let priceOverrides=[];
 
 function setLanguage(lang){
   if(!translations[lang])lang="ua";
@@ -134,7 +135,7 @@ function setLanguage(lang){
   document.getElementById("pricingGrid").innerHTML=packages[lang].map((pack,i)=>`
     <article class="pricing-card ${i===3?"featured":""}">
       <div class="package-top"><span>0${i+1}</span>${i===3?"<em>MAX</em>":""}</div>
-      <h3>${pack[0]}</h3><strong>${pack[1]}</strong>
+      <h3>${pack[0]}</h3><strong>${priceOverrides[i]||pack[1]}</strong>
       <ul>${pack[2].map(item=>`<li>${item}</li>`).join("")}</ul>
       <p>${t.priceNote}</p><a href="#contact">${t.cta}<b>↗</b></a>
     </article>`).join("");
@@ -180,6 +181,22 @@ async function loadGallery(){
   renderGallery();
 }
 
+async function loadPrices(){
+  try{
+    const response=await fetch(`./price-settings.json?v=${Date.now()}`,{cache:"no-store"});
+    if(!response.ok)throw new Error("Price settings unavailable");
+    const data=await response.json();
+    if(!Array.isArray(data.prices)||data.prices.length!==4||!data.prices.every(price=>typeof price==="string"&&price.trim()))throw new Error("Price settings unavailable");
+    priceOverrides=data.prices.map(price=>price.trim());
+    setLanguage(currentLanguage);
+  }catch{}
+}
+
+document.addEventListener("eraevent:prices-preview",event=>{
+  const prices=event.detail&&event.detail.prices;
+  if(Array.isArray(prices)&&prices.length===4){priceOverrides=prices;setLanguage(currentLanguage)}
+});
+
 document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>setLanguage(button.dataset.lang)));
 document.getElementById("year").textContent=new Date().getFullYear();
 
@@ -196,3 +213,4 @@ const browserLanguage=(navigator.language||"").toLowerCase();
 const initialLanguage=translations[savedLanguage]?savedLanguage:browserLanguage.startsWith("pl")?"pl":browserLanguage.startsWith("ru")?"ru":browserLanguage.startsWith("en")?"en":"ua";
 setLanguage(initialLanguage);
 loadGallery();
+loadPrices();

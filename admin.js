@@ -1,5 +1,5 @@
 (function(){
-let settings=[],selected=0,dragged=null,heroDevice="desktop",heroBlob=null,heroObjectUrl="";
+let settings=[],selected=0,dragged=null,heroDevice="desktop",heroBlob=null,heroObjectUrl="",prices=[];
 const DEFAULT_ACCENT="#c9a96a";
 const defaultHero=()=>({desktop:{x:56,y:50,zoom:104,titleScale:100,textOffset:0},mobile:{x:34,y:50,zoom:100,titleScale:100,textOffset:0},accentColor:DEFAULT_ACCENT});
 let hero=defaultHero();
@@ -9,6 +9,8 @@ const heroPreview=document.getElementById("heroEditorPreview"),heroControls={x:d
 const accentColor=document.getElementById("accentColor"),accentHex=document.getElementById("accentHex");
 const loginDialog=document.getElementById("adminLogin"),loginForm=document.getElementById("adminLoginForm"),passwordInput=document.getElementById("adminPassword"),loginError=document.getElementById("adminLoginError");
 const passwordHash="a1238fe5fb3c5596a4b3d87947e498d3267245ec742bda43960a8e851afd466c";
+const defaultPrices=()=>["2999 zł","3999 zł","4999 zł","5999 zł"];
+const priceEditorGrid=document.getElementById("priceEditorGrid");
 
 async function hashPassword(value){const data=new TextEncoder().encode(value),digest=await crypto.subtle.digest("SHA-256",data);return Array.from(new Uint8Array(digest)).map(byte=>byte.toString(16).padStart(2,"0")).join("")}
 function openEditor(){loginDialog.close();passwordInput.value="";loginError.hidden=true;editor.hidden=false;editor.scrollIntoView({behavior:"smooth",block:"start"})}
@@ -19,6 +21,9 @@ loginForm.addEventListener("submit",async event=>{event.preventDefault();if(awai
 document.getElementById("closeEditor").addEventListener("click",()=>{editor.hidden=true;document.querySelector(".footer").scrollIntoView({behavior:"smooth",block:"start"})});
 
 function defaultSettings(){return Array.from({length:9},(_,i)=>({file:`gallery-${String(i+1).padStart(2,"0")}.webp`,x:50,y:50,zoom:115}))}
+function publishPricePreview(){document.dispatchEvent(new CustomEvent("eraevent:prices-preview",{detail:{prices:[...prices]}}))}
+function renderPrices(){if(!priceEditorGrid)return;const names=["EVENT LITE","EVENT +","EVENT PRO","EVENT PRO MAX"];priceEditorGrid.innerHTML=names.map((name,index)=>`<label class="price-edit-card"><span>0${index+1}</span><strong>${name}</strong><input type="text" inputmode="decimal" autocomplete="off" aria-label="Ціна ${name}" value="${prices[index]||""}"></label>`).join("");priceEditorGrid.querySelectorAll("input").forEach((input,index)=>input.addEventListener("input",()=>{prices[index]=input.value;publishPricePreview()}))}
+function validPrices(value){return Array.isArray(value)&&value.length===4&&value.every(price=>typeof price==="string"&&price.trim())}
 function validSettings(value){return Array.isArray(value)&&value.length>0&&value.every(item=>typeof item.file==="string"&&Number.isFinite(Number(item.x))&&Number.isFinite(Number(item.y))&&Number.isFinite(Number(item.zoom)))}
 function clamp(value,min,max,fallback){const number=Number(value);return Number.isFinite(number)?Math.max(min,Math.min(max,number)):fallback}
 function normalizeHero(value){const defaults=defaultHero(),normalized={desktop:{},mobile:{},accentColor:DEFAULT_ACCENT};["desktop","mobile"].forEach(device=>{const source=value&&value[device]||{};normalized[device]={x:clamp(source.x,0,100,defaults[device].x),y:clamp(source.y,0,100,defaults[device].y),zoom:clamp(source.zoom,100,180,defaults[device].zoom),titleScale:clamp(source.titleScale,55,120,defaults[device].titleScale),textOffset:clamp(source.textOffset,-20,20,defaults[device].textOffset)}});if(value&&/^#[0-9a-f]{6}$/i.test(value.accentColor||""))normalized.accentColor=value.accentColor.toLowerCase();return normalized}
@@ -45,7 +50,9 @@ document.getElementById("downloadHero").addEventListener("click",()=>{if(!heroBl
 function exportPayload(){return{schemaVersion:2,hero,gallery:settings}}
 document.getElementById("resetAll").addEventListener("click",()=>{settings=defaultSettings();hero=defaultHero();selected=0;heroDevice="desktop";render();updateHero()});
 document.getElementById("downloadButton").addEventListener("click",()=>{const blob=new Blob([JSON.stringify(exportPayload(),null,2)],{type:"application/json"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="gallery-settings.json";link.click();URL.revokeObjectURL(link.href)});
+document.getElementById("downloadPrices").addEventListener("click",()=>{const cleaned=prices.map((price,index)=>price.trim()||defaultPrices()[index]);prices=cleaned;renderPrices();publishPricePreview();const blob=new Blob([JSON.stringify({schemaVersion:1,prices:cleaned},null,2)],{type:"application/json"}),link=document.createElement("a");link.href=URL.createObjectURL(blob);link.download="price-settings.json";link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)});
 document.getElementById("importButton").addEventListener("click",()=>document.getElementById("importFile").click());
 document.getElementById("importFile").addEventListener("change",async event=>{const file=event.target.files[0];if(!file)return;try{const imported=JSON.parse(await file.text()),importedGallery=Array.isArray(imported)?imported:imported.gallery;if(!validSettings(importedGallery))throw new Error();settings=importedGallery.map(item=>({file:item.file,x:Number(item.x),y:Number(item.y),zoom:Number(item.zoom)}));hero=normalizeHero(Array.isArray(imported)?null:imported.hero);selected=0;render();updateHero()}catch{alert("Не вдалося прочитати файл налаштувань.")}});
 fetch(`./gallery-settings.json?v=${Date.now()}`,{cache:"no-store"}).then(response=>response.ok?response.json():Promise.reject()).then(data=>{const importedGallery=Array.isArray(data)?data:data.gallery;settings=validSettings(importedGallery)?importedGallery:defaultSettings();hero=normalizeHero(Array.isArray(data)?null:data.hero);render();updateHero()}).catch(()=>{settings=defaultSettings();hero=defaultHero();render();updateHero()});
+fetch(`./price-settings.json?v=${Date.now()}`,{cache:"no-store"}).then(response=>response.ok?response.json():Promise.reject()).then(data=>{prices=validPrices(data.prices)?data.prices.map(price=>price.trim()):defaultPrices();renderPrices();publishPricePreview()}).catch(()=>{prices=defaultPrices();renderPrices()});
 })();
